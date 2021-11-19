@@ -20,14 +20,15 @@ class StoreController (val storeDataService: StoreDataService){
     }
 
     @GetMapping("/stores/{storeId}")
-    fun getStoreById(@PathVariable storeId: Long): StoreData {
+    fun getStoreById(@PathVariable storeId: Long): Any{
         if(storeDataService.getStore(storeId).isPresent)
         {
             return storeDataService.getStore(storeId).get()
         }
         else
         {
-        return storeDataService.getStore(1).get()
+        return "The given id $storeId is not present"
+        //storeDataService.getStore(1).get()
         }
 
     }
