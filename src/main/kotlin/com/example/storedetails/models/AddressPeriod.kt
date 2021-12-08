@@ -1,19 +1,22 @@
 package com.example.storedetails.models
 
+import java.time.LocalDate
 import javax.persistence.*
 
 @Entity
 
-class AddressPeriod {
+data class AddressPeriod (
+
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id:Long=0
+    var id:Long?=null,
     @Column
-    var dateValidFrom:String?=null
+    var dateValidFrom: LocalDate?=null,
     @Column
-    var dateValidUntill:String?=null
+    var dateValidUntill:LocalDate?=null,
     @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "fk_storeAddress_id")
     var storeAddress : StoreAddress?=null
-}
+)

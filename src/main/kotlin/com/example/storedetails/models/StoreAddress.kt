@@ -4,24 +4,24 @@ import javax.persistence.*
 
 @Entity
 
-class StoreAddress {
+data class StoreAddress (
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id:Long=0
+    var id:Long?=null,
 
     @Column
-    var street : String?=null
+    var street : String?=null,
     @Column
-    var houseNumber : String?=null
+    var houseNumber : String?=null,
     @Column
-    var houseNumberSuffix : String?=null
+    var houseNumberSuffix : String?=null,
     @Column
-    var postalCode : String?=null
+    var postalCode : String?=null,
     @Column
-    var city : String?=null
+    var city : String?=null,
     @Column
     var country : String?=null
 
 
-}
+    )

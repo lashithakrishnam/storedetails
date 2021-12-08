@@ -1,39 +1,39 @@
 package com.example.storedetails.controller
 
+import com.example.storedetails.configuration.ALL_STORES_DETAILS_END_POINT
+import com.example.storedetails.configuration.BASE_URI
+import com.example.storedetails.configuration.STORE_BY_ID_END_POINT
 import com.example.storedetails.models.StoreData
 import com.example.storedetails.service.StoreDataService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDate
 import java.util.*
 
 @RestController
-@RequestMapping("store-service/v1")
+//@RequestMapping("$BASE_URI")
 
-class StoreController (val storeDataService: StoreDataService){
+class StoreController (var  storeDataService: StoreDataService){
 
-//    @Autowired
+//   @Autowired
 //   lateinit var  storeDataService: StoreDataService
 
-    @GetMapping("/stores")
-    fun getAllStores(): List<StoreData> {
-        return storeDataService.getStores()
-    }
-
-    @GetMapping("/stores/{storeId}")
-    fun getStoreById(@PathVariable storeId: Long): Any{
-        if(storeDataService.getStore(storeId).isPresent)
-        {
-            return storeDataService.getStore(storeId).get()
-        }
-        else
-        {
-        return "The given id $storeId is not present"
-        //storeDataService.getStore(1).get()
-        }
+    @GetMapping(ALL_STORES_DETAILS_END_POINT)
+    fun getAllStores(@RequestParam(required = false)refDate:String?=null,@RequestParam(required = false)futureFlage:Boolean=false
+    ): List<StoreData> {
+        println("$refDate  $futureFlage")
+        return storeDataService.getStores(refDate,futureFlage)
 
     }
 
-    @PostMapping("/stores")
+    @GetMapping(STORE_BY_ID_END_POINT)
+
+    fun getStoreById(@PathVariable storeId: Long): StoreData{
+
+        return storeDataService.getStore(storeId)
+    }
+
+    @PostMapping(ALL_STORES_DETAILS_END_POINT)
     fun addStoredata(@RequestBody storeData: StoreData): String {
         return storeDataService.addStore(storeData)
     }
@@ -52,3 +52,14 @@ class StoreController (val storeDataService: StoreDataService){
 //}
 //else{
 //    print("inside else")
+
+//
+//if(storeDataService.getStore(storeId).isPresent)
+//{
+//    return storeDataService.getStore(storeId).get()
+//}
+//else
+//{
+//    return "The given id $storeId is not present"
+//    //storeDataService.getStore(1).get()
+//}
