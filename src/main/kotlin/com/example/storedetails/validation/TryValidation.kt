@@ -1,27 +1,52 @@
 package com.example.storedetails.validation
 
 import com.example.storedetails.models.AddressPeriod
-import com.example.storedetails.models.StoreAddress
 import com.example.storedetails.models.StoreData
+import com.example.storedetails.repo.StoreDataRepo
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
+import com.example.storedetails.exception.DataAlreadyPresentException
 
 @Service
-class TryValidation {
+class TryValidation (val storeDataRepo: StoreDataRepo,){
 
     fun validData(storeData: StoreData):Boolean
-    {  var addressPeriod:List<AddressPeriod>? =storeData.addressPeriod
-        var storeAddress: StoreAddress? =addressPeriod?.get(0)?.storeAddress
+    {  val addressPeriod:List<AddressPeriod>? =storeData.addressPeriod
+        if(storeData.name==null||storeData.status==null||storeData.addressPeriod!!.isEmpty())
 
-        if(storeData.name==null||storeData.status==null|| addressPeriod?.get(0)?.dateValidFrom ==null||storeAddress?.city==null||storeAddress?.country==null||storeAddress?.postalCode==null||storeAddress?.street==null||storeAddress?.houseNumberSuffix==null||storeAddress?.houseNumber==null)
+            {
+                return false
+            }
+        for(data in addressPeriod!!) {
+            if(data.storeAddress==null)
+            {
+                return false
+            }
+
+            if(data.dateValidFrom==null||data.storeAddress!!.street==null||data.storeAddress!!.houseNumber==null||data.storeAddress!!.houseNumberSuffix==null||data.storeAddress!!.postalCode==null||data.storeAddress!!.city==null||data.storeAddress!!.country==null)
+            {
+                return false
+            }
+        }
+        var result=storeDataRepo.findAll()
+        for(data in result)
         {
-            return false
+            if(data.name==storeData.name)
+            {
+                throw DataAlreadyPresentException(storeData.name!!)
+
+            }
         }
 
         return true
+
+
+
+
     }
+
+
 
     fun validDateformat(refDate: String?): LocalDate? {
         var date: LocalDate? = null
@@ -32,3 +57,10 @@ class TryValidation {
         return date
     }
 }
+//
+//var storeAddress: StoreAddress? =addressPeriod?.get(0)?.storeAddress
+//
+//if(storeData.name==null||storeData.status==null|| addressPeriod?.get(0)?.dateValidFrom ==null||storeAddress?.city==null||storeAddress?.country==null||storeAddress?.postalCode==null||storeAddress?.street==null||storeAddress?.houseNumberSuffix==null||storeAddress?.houseNumber==null)
+//{
+//    return false
+//}

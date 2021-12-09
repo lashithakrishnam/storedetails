@@ -7,13 +7,12 @@ import com.example.storedetails.validation.TryValidation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import com.example.storedetails.exception.InputFieldsAreNullException
 
 @Service
 class StoreDataService ( var storeDataRepo: StoreDataRepo){
 
-//
-//  @Autowired
-//lateinit var storeDataRepo: StoreDataRepo
+
 
     @Autowired
      lateinit var validation: TryValidation
@@ -42,18 +41,22 @@ class StoreDataService ( var storeDataRepo: StoreDataRepo){
 
     private fun presentAndFutureRecords(result: List<StoreData>, date: LocalDate): List<StoreData> {
         for(data in result)
-        {    var data1=data
+        {
             data.addressPeriod=data.addressPeriod!!.filter{filterData->(filterData.dateValidFrom!! <=date&&(filterData.dateValidUntill==null||filterData.dateValidUntill!!>=date)||(filterData.dateValidFrom!! >=date&&(filterData.dateValidUntill==null||filterData.dateValidUntill!!>=date)))}
         }
-        return result
+        val finalResult =result.filter { filterData->(filterData.addressPeriod!!.isNotEmpty()) }
+        return finalResult
+
     }
 
 
 
     private fun presentRecords(result: List<StoreData>, refDate: LocalDate): List<StoreData> {
         for(data in result){
-            data.addressPeriod=data.addressPeriod!!.filter{filterData->(filterData.dateValidFrom!! <=refDate&&(filterData.dateValidUntill==null||filterData.dateValidUntill!!>=refDate) )} }
-        return result
+            data.addressPeriod=data.addressPeriod!!.filter{filterData->(filterData.dateValidFrom!! <=refDate&&(filterData.dateValidUntill==null||filterData.dateValidUntill!!>=refDate) )}
+        }
+        val finalResult =result.filter { filterData->(filterData.addressPeriod!!.isNotEmpty()) }
+        return finalResult
         }
 
 
@@ -71,9 +74,15 @@ class StoreDataService ( var storeDataRepo: StoreDataRepo){
         storeDataRepo.save(storeData)
         return "datasaved"}
         else
-       {  throw NullPointerException()
+       {  throw InputFieldsAreNullException()
        }
 
+
+    }
+
+    fun deleteStore(storeId: Long): String {
+        storeDataRepo.deleteById(storeId)
+        return "Store data of given id $storeId is deleted"
 
     }
 //        if(storeDataRepo?.findById(storeId)== "empty")
@@ -86,6 +95,10 @@ class StoreDataService ( var storeDataRepo: StoreDataRepo){
 //        }
 
 //       return storeDataRepo?.findById(storeId) ?: storeDataRepo!!.findById(1)
+
+    //
+//  @Autowired
+//lateinit var storeDataRepo: StoreDataRepo
 
 
 

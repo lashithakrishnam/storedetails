@@ -1,6 +1,7 @@
 package com.example.storedetails.controller
 
-import com.example.storedetails.configuration.ALL_STORES_DETAILS_END_POINT
+
+import com.example.storedetails.configuration.ALL_STORES_END_POINT
 import com.example.storedetails.configuration.BASE_URI
 import com.example.storedetails.configuration.STORE_BY_ID_END_POINT
 import com.example.storedetails.models.StoreData
@@ -11,17 +12,16 @@ import java.time.LocalDate
 import java.util.*
 
 @RestController
-//@RequestMapping("$BASE_URI")
+@RequestMapping(BASE_URI)
 
 class StoreController (var  storeDataService: StoreDataService){
 
-//   @Autowired
-//   lateinit var  storeDataService: StoreDataService
 
-    @GetMapping(ALL_STORES_DETAILS_END_POINT)
+
+    @GetMapping(ALL_STORES_END_POINT)
     fun getAllStores(@RequestParam(required = false)refDate:String?=null,@RequestParam(required = false)futureFlage:Boolean=false
     ): List<StoreData> {
-        println("$refDate  $futureFlage")
+
         return storeDataService.getStores(refDate,futureFlage)
 
     }
@@ -33,9 +33,13 @@ class StoreController (var  storeDataService: StoreDataService){
         return storeDataService.getStore(storeId)
     }
 
-    @PostMapping(ALL_STORES_DETAILS_END_POINT)
+    @PostMapping(ALL_STORES_END_POINT)
     fun addStoredata(@RequestBody storeData: StoreData): String {
         return storeDataService.addStore(storeData)
+    }
+    @DeleteMapping(STORE_BY_ID_END_POINT)
+    fun deleteStore(@PathVariable storeId: Long):String{
+        return storeDataService.deleteStore(storeId)
     }
 }
 
@@ -63,3 +67,6 @@ class StoreController (var  storeDataService: StoreDataService){
 //    return "The given id $storeId is not present"
 //    //storeDataService.getStore(1).get()
 //}
+//   @Autowired
+//   lateinit var  storeDataService: StoreDataService
+//println("$refDate  $futureFlage")
