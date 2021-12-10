@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import com.example.storedetails.exception.DataAlreadyPresentException
+import com.example.storedetails.exception.DateIncorrectException
 
 @Service
 class TryValidation (val storeDataRepo: StoreDataRepo,){
@@ -28,6 +29,11 @@ class TryValidation (val storeDataRepo: StoreDataRepo,){
             {
                 return false
             }
+            if(data.dateValidUntill!=null&&(data.dateValidUntill!!<data.dateValidFrom))
+            {
+                throw DateIncorrectException(data.dateValidUntill!!,data.dateValidFrom!!)
+            }
+
         }
         var result=storeDataRepo.findAll()
         for(data in result)

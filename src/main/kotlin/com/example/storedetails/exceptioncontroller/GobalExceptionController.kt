@@ -1,6 +1,7 @@
 package com.example.storedetails.exceptioncontroller
 
 import com.example.storedetails.exception.DataAlreadyPresentException
+import com.example.storedetails.exception.DateIncorrectException
 import com.example.storedetails.exception.InputFieldsAreNullException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
@@ -37,6 +38,12 @@ class GobalExceptionController {
     }
     @ExceptionHandler(InputFieldsAreNullException::class)
     fun handleInputFieldsAreNullException( ex:InputFieldsAreNullException): ResponseEntity<String>{
+        return ResponseEntity(ex.message,HttpStatus.BAD_REQUEST)
+
+    }
+
+    @ExceptionHandler(DateIncorrectException::class)
+    fun handleDateIncorrectException( ex: DateIncorrectException): ResponseEntity<String>{
         return ResponseEntity(ex.message,HttpStatus.BAD_REQUEST)
 
     }

@@ -11,7 +11,7 @@ data class StoreAddress (
     var id:Long?=null,
 
     @Column
-    var street : String?=null,
+    val street : String?=null,
     @Column
     var houseNumber : String?=null,
     @Column
