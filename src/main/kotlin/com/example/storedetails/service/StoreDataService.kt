@@ -1,6 +1,5 @@
 package com.example.storedetails.service
 
-import com.example.storedetails.models.AddressPeriod
 import com.example.storedetails.models.StoreData
 import com.example.storedetails.repo.StoreDataRepo
 import com.example.storedetails.validation.TryValidation
@@ -8,6 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import com.example.storedetails.exception.InputFieldsAreNullException
+import org.apache.catalina.Store
+import java.util.Arrays.stream
+import java.util.stream.StreamSupport.stream
+import kotlin.streams.toList
 
 @Service
 class StoreDataService ( var storeDataRepo: StoreDataRepo){
@@ -40,24 +43,19 @@ class StoreDataService ( var storeDataRepo: StoreDataRepo){
     }
 
     private fun presentAndFutureRecords(result: List<StoreData>, date: LocalDate): List<StoreData> {
-        for(data in result)
-        {
-            data.addressPeriod=data.addressPeriod!!.filter{filterData->(filterData.dateValidFrom!! <=date&&(filterData.dateValidUntill==null||filterData.dateValidUntill!!>=date)||(filterData.dateValidFrom!! >=date&&(filterData.dateValidUntill==null||filterData.dateValidUntill!!>=date)))}
-        }
+        result.forEach{ data-> data.addressPeriod=data.addressPeriod!!.filter{filterData->(filterData.dateValidFrom!! <=date&&(filterData.dateValidUntill==null||filterData.dateValidUntill!!>=date)||(filterData.dateValidFrom!! >=date&&(filterData.dateValidUntill==null||filterData.dateValidUntill!!>=date)))} }
         val finalResult =result.filter { filterData->(filterData.addressPeriod!!.isNotEmpty()) }
         return finalResult
-
     }
 
 
-
     private fun presentRecords(result: List<StoreData>, refDate: LocalDate): List<StoreData> {
-        for(data in result){
-            data.addressPeriod=data.addressPeriod!!.filter{filterData->(filterData.dateValidFrom!! <=refDate&&(filterData.dateValidUntill==null||filterData.dateValidUntill!!>=refDate) )}
-        }
+
+        result.forEach{data->data.addressPeriod=data.addressPeriod!!.filter{ filterData -> (filterData.dateValidFrom!! <= refDate && (filterData.dateValidUntill == null || filterData.dateValidUntill!! >= refDate)) }}
+
         val finalResult =result.filter { filterData->(filterData.addressPeriod!!.isNotEmpty()) }
         return finalResult
-        }
+    }
 
 
 
@@ -99,10 +97,24 @@ class StoreDataService ( var storeDataRepo: StoreDataRepo){
     //
 //  @Autowired
 //lateinit var storeDataRepo: StoreDataRepo
+    /*  for (data in result) {
+             data.addressPeriod =
+                 data.addressPeriod!!.filter { filterData -> (filterData.dateValidFrom!! <= refDate && (filterData.dateValidUntill == null || filterData.dateValidUntill!! >= refDate)) }
+         }*/
+    /*    val finalResult= result.stream().map{ filterData ->
+            (filterData.addressPeriod!!.stream()
+                .filter { filterData1 -> (filterData1.dateValidFrom!! <= refDate && (filterData1.dateValidUntill == null || filterData1.dateValidUntill!! >= refDate))}.toList())
+        }.toList()*/
 
 
+//        val finalResult= result.stream().map{ filterData -> (filterData.addressPeriod.getDateValid
+    //println(finalResult)
+    // finalResult =finalResult.stream().filter{ filterData->(filterData.addressPeriod!!.isNotEmpty()) }.collect(Collectors.toList())
+    // return result.stream().filter { filterData -> (filterData.addressPeriod!!.isEmpty()) }.toList()
 
 
+    //val finalresult= result.map{ data->data.addressPeriod!!.filter{ filterData -> (filterData.dateValidFrom!! <= refDate && (filterData.dateValidUntill == null || filterData.dateValidUntill!! >= refDate)) }}.toList()
+    //println(finalresult)
 
 }
 
