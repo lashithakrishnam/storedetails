@@ -7,58 +7,35 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import com.example.storedetails.exception.InputFieldsAreNullException
-import org.apache.catalina.Store
-import java.util.Arrays.stream
-import java.util.stream.StreamSupport.stream
-import kotlin.streams.toList
 
 @Service
-class StoreDataService ( var storeDataRepo: StoreDataRepo){
-
+class StoreDataService ( var storeDataRepo: StoreDataRepo) {
 
 
     @Autowired
-     lateinit var validation: TryValidation
+    lateinit var validation: TryValidation
 
 
+    fun getStores(refDate: String?, flag: Boolean): List<StoreData> {
 
-    fun getStores(refDate:String?,FutureFlage:Boolean): List<StoreData>{
-
-      val date:LocalDate?=validation.validDateformat(refDate)
-        var result=storeDataRepo.findAll()
-        if(result.isEmpty())
-        {
+        val date: LocalDate = validation.validDateFormat(refDate)
+        val result = storeDataRepo.findAll()
+        if (result.isEmpty()) {
             throw NoSuchElementException()
         }
-        return if(date==null) {
-            result
-        } else if (FutureFlage) {
+        return getRecords(result, date, flag)
 
-            presentAndFutureRecords(result, date)
-        } else {
+    }
 
-            presentRecords(result, date)
+    private fun getRecords(result: List<StoreData>, date: LocalDate, flag: Boolean): List<StoreData> {
+
+        result.forEach { data ->
+            data.addressPeriod =
+                data.addressPeriod!!.filter { filterData -> ((filterData.dateValidFrom!! <= date) && (filterData.dateValidUntill == null || filterData.dateValidUntill!! >= date) || (filterData.dateValidUntill!! >= date && flag)) }
         }
+        return result.filter { filterData -> (filterData.addressPeriod!!.isNotEmpty()) }
 
     }
-
-    private fun presentAndFutureRecords(result: List<StoreData>, date: LocalDate): List<StoreData> {
-        result.forEach{ data-> data.addressPeriod=data.addressPeriod!!.filter{filterData->(filterData.dateValidFrom!! <=date&&(filterData.dateValidUntill==null||filterData.dateValidUntill!!>=date)||(filterData.dateValidFrom!! >=date&&(filterData.dateValidUntill==null||filterData.dateValidUntill!!>=date)))} }
-        val finalResult =result.filter { filterData->(filterData.addressPeriod!!.isNotEmpty()) }
-        return finalResult
-    }
-
-
-    private fun presentRecords(result: List<StoreData>, refDate: LocalDate): List<StoreData> {
-
-        result.forEach{data->data.addressPeriod=data.addressPeriod!!.filter{ filterData -> (filterData.dateValidFrom!! <= refDate && (filterData.dateValidUntill == null || filterData.dateValidUntill!! >= refDate)) }}
-
-        val finalResult =result.filter { filterData->(filterData.addressPeriod!!.isNotEmpty()) }
-        return finalResult
-    }
-
-
-
 
 
     fun getStore(storeId: Long): StoreData {
@@ -67,30 +44,40 @@ class StoreDataService ( var storeDataRepo: StoreDataRepo){
     }
 
     fun addStore(storeData: StoreData): String {
-       if( validation.validData(storeData))
-       {
-        storeDataRepo.save(storeData)
-        return "datasaved"}
-        else
-       {  throw InputFieldsAreNullException()
-       }
-
-
+        val typeOFInput = "Post"
+        if (validation.validData(storeData, typeOFInput)) {
+            storeDataRepo.save(storeData)
+            return "dataSaved"
+        } else {
+            throw InputFieldsAreNullException()
+        }
     }
 
     fun deleteStore(storeId: Long): String {
         storeDataRepo.deleteById(storeId)
         return "Store data of given id $storeId is deleted"
-
     }
 
     fun updateStore(storeData: StoreData, storeId: Long): String {
-        if( validation.validData(storeData))
-        {
-        storeDataRepo.save(storeData)}
+        val typeOFInput = "Put"
+        val storeDataValue = storeDataRepo.findById(storeId).get()
+
+        if (validation.validData(storeDataValue, typeOFInput)) {
+
+            storeDataRepo.save(storeData)
+            return "Store data of given id $storeId is updated"
+        }
         return "Store data of given id $storeId is updated"
 
     }
+}
+
+
+
+
+
+
+
 //        if(storeDataRepo?.findById(storeId)== "empty")
 //        { print("inside if")
 //            print(storeDataRepo?.findById(storeId))
@@ -104,14 +91,14 @@ class StoreDataService ( var storeDataRepo: StoreDataRepo){
 
     //
 //  @Autowired
-//lateinit var storeDataRepo: StoreDataRepo
+//latent var storeDataRepo: StoreDataRepo
     /*  for (data in result) {
              data.addressPeriod =
-                 data.addressPeriod!!.filter { filterData -> (filterData.dateValidFrom!! <= refDate && (filterData.dateValidUntill == null || filterData.dateValidUntill!! >= refDate)) }
+                 data.addressPeriod!!.filter { filterData -> (filterData.dateValidFrom!! <= refDate && (filterData.dateValidUntil == null || filterData.dateValidUntil!! >= refDate)) }
          }*/
     /*    val finalResult= result.stream().map{ filterData ->
             (filterData.addressPeriod!!.stream()
-                .filter { filterData1 -> (filterData1.dateValidFrom!! <= refDate && (filterData1.dateValidUntill == null || filterData1.dateValidUntill!! >= refDate))}.toList())
+                .filter { filterData1 -> (filterData1.dateValidFrom!! <= refDate && (filterData1.dateValidUntil == null || filterData1.dateValidUntil!! >= refDate))}.toList())
         }.toList()*/
 
 
@@ -121,10 +108,19 @@ class StoreDataService ( var storeDataRepo: StoreDataRepo){
     // return result.stream().filter { filterData -> (filterData.addressPeriod!!.isEmpty()) }.toList()
 
 
-    //val finalresult= result.map{ data->data.addressPeriod!!.filter{ filterData -> (filterData.dateValidFrom!! <= refDate && (filterData.dateValidUntill == null || filterData.dateValidUntill!! >= refDate)) }}.toList()
-    //println(finalresult)
+    //val finalResult= result.map{ data->data.addressPeriod!!.filter{ filterData -> (filterData.dateValidFrom!! <= refDate && (filterData.dateValidUntil == null || filterData.dateValidUntil!! >= refDate)) }}.toList()
+    //println(finalResult)
+    /* private fun presentRecords(result: List<StoreData>, refDate: LocalDate): List<StoreData> {
 
-}
+         result.forEach { data ->
+             data.addressPeriod =
+                 data.addressPeriod!!.filter { filterData -> (filterData.dateValidFrom!! <= refDate && (filterData.dateValidUntil == null || filterData.dateValidUntil!! >= refDate)) }
+         }
+
+         return result.filter { filterData -> (filterData.addressPeriod!!.isNotEmpty()) }
+     }
+ */
+
 
 
 

@@ -8,14 +8,12 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import com.example.storedetails.exception.DataAlreadyPresentException
 import com.example.storedetails.exception.DateIncorrectException
-import java.util.*
-import java.util.stream.Collectors
-import kotlin.streams.toList
+
 
 @Service
-class TryValidation (val storeDataRepo: StoreDataRepo,){
+class TryValidation (val storeDataRepo: StoreDataRepo ){
 
-    fun validData(storeData: StoreData):Boolean
+    fun validData(storeData: StoreData,TypeOfInput :String ):Boolean
     {  val addressPeriod:List<AddressPeriod>? =storeData.addressPeriod
         if(storeData.name==null||storeData.status==null||storeData.addressPeriod!!.isEmpty())
 
@@ -38,7 +36,8 @@ class TryValidation (val storeDataRepo: StoreDataRepo,){
             isDatesGivenValid(it.dateValidUntill,it.dateValidFrom)
 
         }
-           isDuplicateExisting(storeData)
+        if(TypeOfInput=="Post")
+        { isDuplicateExisting(storeData)}
         return true
 
     }
@@ -51,11 +50,11 @@ class TryValidation (val storeDataRepo: StoreDataRepo,){
         return false
     }
 
-    private fun isDatesGivenValid(dateValidUntill: LocalDate?, dateValidFrom: LocalDate?) {
+    private fun isDatesGivenValid(dateValidUntil: LocalDate?, dateValidFrom: LocalDate?) {
 
-        if((dateValidUntill != null) && (dateValidUntill < dateValidFrom))
+        if((dateValidUntil != null) && (dateValidUntil < dateValidFrom))
         {
-            throw DateIncorrectException(dateValidUntill,dateValidFrom)
+            throw DateIncorrectException(dateValidUntil,dateValidFrom)
         }
 
     }
@@ -63,20 +62,17 @@ class TryValidation (val storeDataRepo: StoreDataRepo,){
    private fun isDuplicateExisting(storeData: StoreData)
     {
         val result=storeDataRepo.findAll()
-        val finalResult=result.filter{ filterdata->(filterdata.name==storeData.name)}.toList().isNotEmpty()
+        val finalResult=result.filter{ filterData->(filterData.name==storeData.name)}.toList().isNotEmpty()
         if(finalResult)
         {
             throw DataAlreadyPresentException(storeData.name!!)
         }
     }
 
-    fun validDateformat(refDate: String?): LocalDate? {
-        var date: LocalDate? = null
-        if (refDate != null) {
-            date = LocalDate.parse(refDate, DateTimeFormatter.ISO_DATE)
-            return date
-        }
-        return date
+    fun validDateFormat(refDate: String?): LocalDate {
+        return if (refDate != null) { LocalDate.parse(refDate, DateTimeFormatter.ISO_DATE)}
+        else { LocalDate.now() }
+
     }
 }
 //

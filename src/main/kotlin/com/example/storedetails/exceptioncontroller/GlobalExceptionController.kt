@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import java.time.format.DateTimeParseException
 
 @ControllerAdvice
-class GobalExceptionController {
+class GlobalExceptionController {
 
     @ExceptionHandler(NoSuchElementException::class)
     fun handleNoSuchElementException(): ResponseEntity<String> {
