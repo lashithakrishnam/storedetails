@@ -6,10 +6,7 @@ import com.example.storedetails.configuration.BASE_URI
 import com.example.storedetails.configuration.STORE_BY_ID_END_POINT
 import com.example.storedetails.models.StoreData
 import com.example.storedetails.service.StoreDataService
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
-import java.time.LocalDate
-import java.util.*
 
 @RestController
 @RequestMapping(BASE_URI)
@@ -19,10 +16,10 @@ class StoreController (var  storeDataService: StoreDataService){
 
 
     @GetMapping(ALL_STORES_END_POINT)
-    fun getAllStores(@RequestParam(required = false)refDate:String?=null,@RequestParam(required = false)futureFlage:Boolean=false
+    fun getAllStores(@RequestParam(required = false)refDate:String?=null,@RequestParam(required = false)flag:Boolean=false
     ): List<StoreData> {
 
-        return storeDataService.getStores(refDate,futureFlage)
+        return storeDataService.getStores(refDate,flag)
 
     }
 
@@ -34,11 +31,11 @@ class StoreController (var  storeDataService: StoreDataService){
     }
 
     @PostMapping(ALL_STORES_END_POINT)
-    fun addStoredata(@RequestBody storeData: StoreData): String {
+    fun addStoreData(@RequestBody storeData: StoreData): String {
         return storeDataService.addStore(storeData)
     }
     @PutMapping(STORE_BY_ID_END_POINT)
-    fun updateStoredata(@PathVariable storeId: Long,@RequestBody storeData: StoreData):String{
+    fun updateStoreData(@PathVariable storeId: Long,@RequestBody storeData: StoreData):String{
         return storeDataService.updateStore(storeData,storeId)
     }
     @DeleteMapping(STORE_BY_ID_END_POINT)
