@@ -37,6 +37,10 @@ class StoreController (var  storeDataService: StoreDataService){
     fun addStoredata(@RequestBody storeData: StoreData): String {
         return storeDataService.addStore(storeData)
     }
+    @PutMapping(STORE_BY_ID_END_POINT)
+    fun updateStoredata(@PathVariable storeId: Long,@RequestBody storeData: StoreData):String{
+        return storeDataService.updateStore(storeData,storeId)
+    }
     @DeleteMapping(STORE_BY_ID_END_POINT)
     fun deleteStore(@PathVariable storeId: Long):String{
         return storeDataService.deleteStore(storeId)

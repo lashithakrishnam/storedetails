@@ -83,6 +83,14 @@ class StoreDataService ( var storeDataRepo: StoreDataRepo){
         return "Store data of given id $storeId is deleted"
 
     }
+
+    fun updateStore(storeData: StoreData, storeId: Long): String {
+        if( validation.validData(storeData))
+        {
+        storeDataRepo.save(storeData)}
+        return "Store data of given id $storeId is updated"
+
+    }
 //        if(storeDataRepo?.findById(storeId)== "empty")
 //        { print("inside if")
 //            print(storeDataRepo?.findById(storeId))
