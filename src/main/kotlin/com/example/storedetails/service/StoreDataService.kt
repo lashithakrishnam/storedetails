@@ -16,9 +16,15 @@ class StoreDataService ( var storeDataRepo: StoreDataRepo) {
     lateinit var validation: TryValidation
 
 
-    fun getStores(refDate: String?, flag: Boolean): List<StoreData> {
+
+
+    fun getStores(refDate: String?, flag: Boolean): List<Any> {
 
         val date: LocalDate = validation.validDateFormat(refDate)
+        println(flag)
+        return storeDataRepo.getStores(date,flag)
+    }
+        /*
         val result = storeDataRepo.findAll()
         if (result.isEmpty()) {
             throw NoSuchElementException()
@@ -33,9 +39,9 @@ class StoreDataService ( var storeDataRepo: StoreDataRepo) {
             data.addressPeriod =
                 data.addressPeriod!!.filter { filterData -> ((filterData.dateValidFrom!! <= date) && (filterData.dateValidUntill == null || filterData.dateValidUntill!! >= date) || (filterData.dateValidUntill!! >= date && flag)) }
         }
-        return result.filter { filterData -> (filterData.addressPeriod!!.isNotEmpty()) }
+        return result.filter { filterData -> (filterData.addressPeriod!!.isNotEmpty()) }*/
 
-    }
+
 
 
     fun getStore(storeId: Long): StoreData {

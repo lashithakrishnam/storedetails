@@ -17,7 +17,7 @@ class StoreController (var  storeDataService: StoreDataService){
 
     @GetMapping(ALL_STORES_END_POINT)
     fun getAllStores(@RequestParam(required = false)refDate:String?=null,@RequestParam(required = false)flag:Boolean=false
-    ): List<StoreData> {
+    ): List<Any> {
 
         return storeDataService.getStores(refDate,flag)
 
