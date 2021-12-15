@@ -50,14 +50,13 @@ class StoreDataService ( var storeDataRepo: StoreDataRepo) {
     }
 
     fun addStore(storeData: StoreData): String {
-        val typeOFInput = "Post"
-        //println(storeData.name)
-        if (validation.validData(storeData, typeOFInput)) {
+        val id:Long=0
+        if (validation.validData(storeData,id)) {
             storeDataRepo.save(storeData)
             return "dataSaved"
-        } else {
-            throw InputFieldsAreNullException()
         }
+        throw InputFieldsAreNullException()
+
     }
 
     fun deleteStore(storeId: Long): String {
@@ -66,18 +65,22 @@ class StoreDataService ( var storeDataRepo: StoreDataRepo) {
     }
 
     fun updateStore(storeData: StoreData, storeId: Long): String {
-        val typeOFInput = "Put"
-        val storeDataValue = storeDataRepo.findById(storeId).get()
 
-        if (validation.validData(storeDataValue, typeOFInput)) {
-
-            storeDataRepo.save(storeData)
-            return "Store data of given id $storeId is updated"
+         if(!storeDataRepo.existsById(storeId)) {
+           return  addStore(storeData)
         }
-        return "Store data of given id $storeId is updated"
+        else {
+            if (validation.validData(storeData,storeId))
+            {
+                storeDataRepo.save(storeData)
+           return "Store data of given id $storeId is updated"
+            }
+             throw(InputFieldsAreNullException())
+        }
+      }
 
     }
-}
+
 
 
 

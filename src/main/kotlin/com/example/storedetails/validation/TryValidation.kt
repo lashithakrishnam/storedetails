@@ -13,7 +13,7 @@ import com.example.storedetails.exception.DateIncorrectException
 @Service
 class TryValidation (val storeDataRepo: StoreDataRepo ){
 
-    fun validData(storeData: StoreData,TypeOfInput :String ):Boolean
+    fun validData(storeData: StoreData ,id:Long):Boolean
     {  val addressPeriod:List<AddressPeriod>? =storeData.addressPeriod
         if(storeData.name==null||storeData.status==null||storeData.addressPeriod!!.isEmpty())
 
@@ -36,8 +36,8 @@ class TryValidation (val storeDataRepo: StoreDataRepo ){
             isDatesGivenValid(it.dateValidUntill,it.dateValidFrom)
 
         }
-        if(TypeOfInput=="Post")
-        { isDuplicateExisting(storeData)}
+
+        isDuplicateExisting(storeData,id)
         return true
 
     }
@@ -59,14 +59,21 @@ class TryValidation (val storeDataRepo: StoreDataRepo ){
 
     }
 
-   private fun isDuplicateExisting(storeData: StoreData)
+   private fun isDuplicateExisting(storeData: StoreData,id:Long)
     {
-        val result=storeDataRepo.findAll()
+
+       val storeName=storeDataRepo.storeExistsByName(storeData.name!!,id)
+        if(storeName.isNotEmpty())
+        {
+            throw DataAlreadyPresentException(storeData.name)
+        }
+        /*  val result=storeDataRepo.findAll()
         val finalResult=result.filter{ filterData->(filterData.name==storeData.name)}.toList().isNotEmpty()
         if(finalResult)
         {
             throw DataAlreadyPresentException(storeData.name!!)
-        }
+        }*/
+
     }
 
     fun validDateFormat(refDate: String?): LocalDate {

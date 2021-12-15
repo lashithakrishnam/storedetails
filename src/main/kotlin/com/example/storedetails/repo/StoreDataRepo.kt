@@ -17,5 +17,6 @@ interface StoreDataRepo : JpaRepository<StoreData,Long> {
     @Query("SELECT store.name as name ,store.status as status ,store.lastUpdated as updateAt, ap as addressPeriod FROM StoreData store Join store.addressPeriod ap where (  ( (ap.dateValidFrom <= :refDate) and ((ap.dateValidUntill = null) or (ap.dateValidUntill >= :refDate)) )or ((ap.dateValidUntill >= :refDate)and(:flag=true))  ) ")
     fun getStores(@Param("refDate")refDate:LocalDate,@Param("flag")flag:Boolean): List<StoreProjection>
 
-
+    @Query("SELECT store.name FROM StoreData store where (store.name= ?1)and(store.id!=?2)")
+    fun storeExistsByName(@Param("name") name:String,@Param("id")id:Long):List<String>
 }
