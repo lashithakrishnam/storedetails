@@ -4,7 +4,10 @@ package com.example.storedetails.controller
 import com.example.storedetails.configuration.ALL_STORES_END_POINT
 import com.example.storedetails.configuration.BASE_URI
 import com.example.storedetails.configuration.STORE_BY_ID_END_POINT
+
+
 import com.example.storedetails.models.StoreData
+import com.example.storedetails.models.StoreProjection
 import com.example.storedetails.service.StoreDataService
 import org.springframework.web.bind.annotation.*
 
@@ -17,7 +20,7 @@ class StoreController (var  storeDataService: StoreDataService){
 
     @GetMapping(ALL_STORES_END_POINT)
     fun getAllStores(@RequestParam(required = false)refDate:String?=null,@RequestParam(required = false)flag:Boolean=false
-    ): List<Any> {
+    ): List<StoreProjection> {
 
         return storeDataService.getStores(refDate,flag)
 

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import com.example.storedetails.exception.InputFieldsAreNullException
+import com.example.storedetails.models.StoreProjection
+
 
 @Service
 class StoreDataService ( var storeDataRepo: StoreDataRepo) {
@@ -17,11 +19,9 @@ class StoreDataService ( var storeDataRepo: StoreDataRepo) {
 
 
 
-
-    fun getStores(refDate: String?, flag: Boolean): List<Any> {
+    fun getStores(refDate: String?, flag: Boolean): List<StoreProjection> {
 
         val date: LocalDate = validation.validDateFormat(refDate)
-        println(flag)
         return storeDataRepo.getStores(date,flag)
     }
         /*
@@ -51,6 +51,7 @@ class StoreDataService ( var storeDataRepo: StoreDataRepo) {
 
     fun addStore(storeData: StoreData): String {
         val typeOFInput = "Post"
+        //println(storeData.name)
         if (validation.validData(storeData, typeOFInput)) {
             storeDataRepo.save(storeData)
             return "dataSaved"

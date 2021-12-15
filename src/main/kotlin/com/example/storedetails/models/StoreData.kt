@@ -30,3 +30,5 @@ import javax.persistence.*
     var addressPeriod: List<AddressPeriod>?=null
 )
 
+
+
