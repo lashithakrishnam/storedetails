@@ -8,13 +8,13 @@ data class StoreAddress (
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id:Long?=null,
-    val street : String?=null,
-    var houseNumber : String?=null,
-    var houseNumberSuffix : String?=null,
-    var postalCode : String?=null,
-    var city : String?=null,
-    var country : String?=null
+    var id:Long=0,
+    var street : String="",
+    var houseNumber : String="",
+    var houseNumberSuffix : String="",
+    var postalCode : String="",
+    var city : String="",
+    var country : String=""
 
 
     )

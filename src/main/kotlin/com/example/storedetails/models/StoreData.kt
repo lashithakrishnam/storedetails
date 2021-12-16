@@ -16,18 +16,18 @@ import javax.persistence.*
  data class StoreData (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id:Long?=null,
-    val name:String?=null,
-    var status:String?=null,
+    var id:Long=0,
+    var name:String="",
+    var status:String="",
     @Column(name = "createdAt",updatable = false)
     @CreatedDate
-    val createdAt:LocalDateTime?=null,
+    var createdAt:LocalDateTime?=null,
     @LastModifiedDate
     @Column(name = "updateAt")
     var lastUpdated: LocalDateTime?=null,
     @OneToMany(cascade = [CascadeType.ALL])
     @JoinColumn(name = "store_id")
-    var addressPeriod: List<AddressPeriod>?=null
+    var addressPeriod: List<AddressPeriod> = emptyList(),
 )
 
 
