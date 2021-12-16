@@ -14,7 +14,7 @@ import java.time.LocalDate
 @Repository
 interface StoreDataRepo : JpaRepository<StoreData,Long> {
 
-    @Query("SELECT store.name as name ,store.status as status ,store.lastUpdated as updateAt, ap as addressPeriod FROM StoreData store Join store.addressPeriod ap WHERE :refDate BETWEEN ap.dateValidFrom AND COALESCE(ap.dateValidUntill,:refDate)  OR ((ap.dateValidFrom > :refDate)AND(:flag=true))   ")
+    @Query("SELECT store.name as name ,store.status as status ,store.lastUpdated as updateAt, ap as addressPeriod FROM StoreData store JOIN store.addressPeriod ap WHERE :refDate BETWEEN ap.dateValidFrom AND COALESCE(ap.dateValidUntill,:refDate)  OR ((ap.dateValidFrom > :refDate)AND(:flag=true))   ")
     fun getStores(@Param("refDate")refDate:LocalDate,@Param("flag")flag:Boolean): List<StoreProjection>
 
     @Query("SELECT store.name FROM StoreData store where (store.name= ?1)and(store.id!=?2)")
