@@ -13,7 +13,7 @@ import com.example.storedetails.exception.DateIncorrectException
 @Service
 class TryValidation (val storeDataRepo: StoreDataRepo ){
 
-    fun validData(storeData: StoreData ,id:Long):Boolean
+    fun validData(storeData: StoreData):Boolean
     {  val addressPeriod:List<AddressPeriod> =storeData.addressPeriod
         if(storeData.addressPeriod.isEmpty())
 
@@ -21,28 +21,28 @@ class TryValidation (val storeDataRepo: StoreDataRepo ){
                 return false
             }
 
-        addressPeriod.forEach {
-            isDatesGivenValid(it.dateValidUntill,it.dateValidFrom)
-
+        addressPeriod.forEach { x ->
+            x.dateValidUntill?.let { isDatesGivenValid(it,x.dateValidFrom) }
         }
 
-        isDuplicateExisting(storeData,id)
+        isDuplicateExisting(storeData)
         return true
 
     }
 
 
 
-    private fun isDatesGivenValid(dateValidUntil: LocalDate?, dateValidFrom: LocalDate?) {
+    fun isDatesGivenValid(dateValidUntil: LocalDate, dateValidFrom: LocalDate){
 
-        if((dateValidUntil != null) && (dateValidUntil < dateValidFrom))
+        if (dateValidUntil < dateValidFrom)
         {
             throw DateIncorrectException(dateValidUntil,dateValidFrom)
         }
 
+
     }
 
-   private fun isDuplicateExisting(storeData: StoreData,id:Long)
+    fun isDuplicateExisting(storeData: StoreData,id:Long)
     {
 
        val storeName=storeDataRepo.storeExistsByName(storeData.name,id)
@@ -51,6 +51,16 @@ class TryValidation (val storeDataRepo: StoreDataRepo ){
             throw DataAlreadyPresentException(storeData.name)
         }
 
+
+    }
+
+     fun isDuplicateExisting(storeData: StoreData)
+    {
+        val storeName=storeDataRepo.findByName(storeData.name)
+        if(storeName.name==storeData.name)
+        {
+            throw DataAlreadyPresentException(storeData.name)
+        }
 
     }
 

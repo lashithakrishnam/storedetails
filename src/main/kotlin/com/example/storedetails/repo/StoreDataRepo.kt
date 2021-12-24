@@ -19,5 +19,8 @@ interface StoreDataRepo : JpaRepository<StoreData,Long> {
 
     @Query("SELECT store.name FROM StoreData store where (store.name= ?1)and(store.id!=?2)")
     fun storeExistsByName(@Param("name") name:String,@Param("id")id:Long):List<String>
+
+    fun findByName(name:String):StoreData
+
 }
 //( (ap.dateValidFrom <= :refDate) and ((ap.dateValidUntill = null) or (ap.dateValidUntill >= :refDate)) )
